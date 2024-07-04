@@ -1,0 +1,4 @@
+raspberrypi.local:8080 {
+	root * /var/www/html
+	file_server
+}

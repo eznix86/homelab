@@ -1,0 +1,64 @@
+services:
+  prowlarr:
+    image: linuxserver/prowlarr:latest
+    volumes:
+      - /var/data/prowlarr/config:/config
+      - /storage/downloads:/downloads
+    ports:
+      - "9696:9696"
+    networks:
+      - arr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Indian/Mauritius
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  radarr:
+    image: linuxserver/radarr:latest
+    volumes:
+      - /var/data/radarr/config:/config
+      - /storage/downloads:/downloads
+      - /storage/movies:/movies
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Indian/Mauritius
+    networks:
+      - arr
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    volumes:
+      - /var/data/transmission/data:/config
+      - /storage/downloads:/downloads
+      - /storage/watch:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    networks:
+      - arr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Indian/Mauritius
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  arr:

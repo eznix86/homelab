@@ -1,0 +1,26 @@
+version: "3.8"
+
+x-custom:
+  touch:
+    - /var/data/filebrowser/database/filebrowser.db
+  files:
+    - .filebrowser.json:/var/data/filebrowser/config/filebrowser.json
+
+services:
+  filebrowser:
+    image: filebrowser/filebrowser
+    ports:
+      - "8080:80"
+    volumes:
+      - /var/data/filebrowser/config/filebrowser.json:/.filebrowser.json
+      - /var/data/filebrowser/database/filebrowser.db:/database/filebrowser.db
+      - /storage:/root
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+      placement:
+        constraints:
+          - node.labels.node == prime
+    user: "${UID}:${GID}"
