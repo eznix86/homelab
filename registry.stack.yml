@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  registry:
+    image: registry:2
+    ports:
+      - "5000:5000"
+    networks:
+      - reverse-proxy
+    environment:
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+    volumes:
+      - /var/data/registry/data:/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  reverse-proxy:
+    external: true

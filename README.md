@@ -21,14 +21,14 @@ curl -fsSL https://get.docker.com -o install-docker.sh
 sudo sh install-docker.sh --version 26.1.4
 
 docker swarm init --advertise-addr <advertising address>
-python main.py deploy jellyfin arr filebrowser portainer
+python main.py deploy jellyfin arr filebrowser portainer registry caddy
 ```
 
 ## Uninstallation
 
 ```sh
 docker node update --availability drain raspberrypi
-python main.py remove jellyfin arr filebrowser portainer
+python main.py remove jellyfin arr filebrowser portainer registry caddy
 
 # Using https://learnubuntu.com/uninstall-docker/ docs
 docker stop $(docker ps -a -q)
@@ -47,6 +47,8 @@ sudo rm -rf /usr/local/bin/docker-compose && sudo rm -rf /etc/docker && sudo rm 
 
 ```sh
 docker node update --label-add node=prime raspberrypi
+# docker network create --driver overlay --attachable --scope swarm vpn-proxy
+docker network create reverse-proxy --scope swarm --driver overlay
 docker node ps --no-trunc
 docker stack ls
 docker stack rm <stack_name>
@@ -55,9 +57,15 @@ docker service ps
 docker service ps <stack>_<container> --no-trunc
 docker service logs -f <stack>_<container>
 docker service inspect <stack>_<container> --format pretty
+sudo docker service update --cap-add NET_ADMIN <stack>_<container>
 docker info
 
 # rsync config to node
 brew install rsync
 rsync -avPz -e ssh $PWD/./ <user>@<host></host>:<path>
+
+# build to registry
+ docker build -t caddy-cloudflare-dns:latest caddy/
+ docker tag caddy-cloudflare-dns registry.home.brunobernard.dev/caddy-cloudflare-dns
+ docker push brunobernard.dev/caddy-cloudflare-dns
 ```

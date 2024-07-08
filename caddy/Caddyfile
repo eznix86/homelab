@@ -1,4 +1,56 @@
-raspberrypi.local:8080 {
-	root * /var/www/html
-	file_server
+(cloudflare) {
+	tls {
+		dns cloudflare {env.CLOUDFLARE_AUTH_TOKEN}
+	}
+}
+
+
+files.home.brunobernard.dev {
+	reverse_proxy filebrowser:80
+	import cloudflare
+}
+
+portainer.home.brunobernard.dev {
+	reverse_proxy portainer:9000
+	import cloudflare
+}
+
+prowlarr.home.brunobernard.dev {
+	reverse_proxy prowlarr:9696
+	import cloudflare
+}
+
+radarr.home.brunobernard.dev {
+	reverse_proxy radarr:7878
+	import cloudflare
+}
+
+sonarr.home.brunobernard.dev {
+	reverse_proxy sonarr:8989
+	import cloudflare
+}
+
+jellyseerr.home.brunobernard.dev {
+	reverse_proxy jellyseerr:5055
+	import cloudflare
+}
+
+transmission.home.brunobernard.dev {
+	reverse_proxy transmission:9091
+	import cloudflare
+}
+
+registry.home.brunobernard.dev {
+	reverse_proxy registry:5000
+	import cloudflare
+}
+
+jellyfin.home.brunobernard.dev {
+	reverse_proxy jellyfin:8096
+	import cloudflare
+}
+
+pihole.home.brunobernard.dev {
+	reverse_proxy pihole:80
+	import cloudflare
 }

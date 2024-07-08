@@ -8,6 +8,7 @@ services:
       - "9696:9696"
     networks:
       - arr
+      - reverse-proxy
     environment:
       - PUID=1000
       - PGID=1000
@@ -32,6 +33,69 @@ services:
       - TZ=Indian/Mauritius
     networks:
       - arr
+      - reverse-proxy
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    volumes:
+      - /var/data/jellyseerr/config:/app/config
+      - /storage/downloads:/downloads
+      - /storage/movies:/movies
+    ports:
+      - "5055:5055"
+    networks:
+      - arr
+      - reverse-proxy
+    environment:
+      - PORT=5055
+      - TZ=Indian/Mauritius
+      - LOG_LEVEL=debug
+      - PUID=0
+      - PGID=0
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=Indian/Mauritius
+    ports:
+      - 8191:8191
+    networks:
+      - arr
+      - reverse-proxy
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    volumes:
+      - /var/data/sonarr/config:/config
+      - /storage/downloads:/downloads
+      - /storage/tv:/tv
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Indian/Mauritius
+    networks:
+      - arr
+      - reverse-proxy
     deploy:
       mode: replicated
       replicas: 1
@@ -40,16 +104,20 @@ services:
 
   transmission:
     image: lscr.io/linuxserver/transmission:latest
+    cap_add:
+      - NET_ADMIN
     volumes:
       - /var/data/transmission/data:/config
       - /storage/downloads:/downloads
       - /storage/watch:/watch
     ports:
-      - 9091:9091
+      - 9091:9091 # Using gluetun's port
       - 51413:51413
       - 51413:51413/udp
     networks:
       - arr
+      - reverse-proxy
+      # - vpn-proxy
     environment:
       - PUID=1000
       - PGID=1000
@@ -60,5 +128,33 @@ services:
       placement:
         constraints: [node.role == manager]
 
+  # network_mode doesn't work with swarm :(
+  # gluetun:
+  #   image: qmcgaw/gluetun
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     - vpn-proxy
+  #   ports:
+  #     - 9091:9091 # Transmission's port see https://code.mendhak.com/run-docker-through-vpn-container/#running-with-transmission
+  #   environment:
+  #     - VPN_SERVICE_PROVIDER=custom
+  #     - VPN_TYPE=wireguard
+  #     - VPN_ENDPOINT_IP=<IP_OF_SERVER>
+  #     - VPN_ENDPOINT_PORT=51820
+  #     - WIREGUARD_PUBLIC_KEY=
+  #     - WIREGUARD_PRIVATE_KEY=
+  #     - WIREGUARD_PRESHARED_KEY=
+  #     - WIREGUARD_ADDRESSES=10.0.0.2/24
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     placement:
+  #       constraints: [node.role == manager]
+
 networks:
+  # vpn-proxy:
+  #   external: true
   arr:
+  reverse-proxy:
+    external: true

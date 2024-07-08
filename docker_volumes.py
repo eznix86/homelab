@@ -11,6 +11,7 @@ IGNORE_PATHS = [
 IGNORE_REGEX = [
     r'^/var/run/.*\.sock$',  # Matches /var/run/*.sock
     r'^/etc/.*$',            # Matches anything under /etc
+    r'.*Caddyfile.*'         # Matches any file with Caddyfile in the name
 ]
 
 DELETE_IGNORE_PATHS = [

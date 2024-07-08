@@ -1,7 +1,19 @@
+x-custom:
+  files:
+    - .env:/var/data/caddy/.env
+    - Caddyfile:/var/data/caddy/Caddyfile
+
 services:
   caddy:
-    image: caddy:latest
-    restart: unless-stopped
+    image: slothcroissant/caddy-cloudflaredns:latest
+    # image: registry.home.brunobernard.dev/caddy-cloudflare-dns
+    env_file:
+      - /var/data/caddy/.env
+    networks:
+      - reverse-proxy
+    environment:
+      - ACME_EMAIL=brunobernard@duck.com
+      - ACME_AGREE=true
     ports:
       - "80:80"
       - "443:443"
@@ -11,3 +23,12 @@ services:
       - /var/data/caddy/site-enabled:/var/data/caddy/site-enabled
       - /var/data/caddy/data:/data
       - /var/data/caddy/config:/config
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  reverse-proxy:
+    external: true

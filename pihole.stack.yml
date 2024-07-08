@@ -1,0 +1,53 @@
+services:
+  pihole:
+    image: bigbeartechworld/big-bear-pihole-unbound:2024.02.2
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8888:80/tcp"
+      - "444:443/tcp"
+      - "5353:5353/udp"
+    environment:
+      TZ: "Indian/Mauritius"
+      WEBPASSWORD: "onedoesnotsimplyaddapasswordintheyamlfile"
+      DNS1: "127.0.0.1#5353"
+      DNS2: "no"
+    networks:
+      - reverse-proxy
+    volumes:
+      - /var/data/pihole/etc/pihole:/etc/pihole/
+      - /var/data/pihole/dnsmasqd:/etc/dnsmasq.d/
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+networks:
+  reverse-proxy:
+    external: true
+# [Blocklists]
+# To be imported in the Pi-hole web interface, under Group Management > Adlists
+
+# https://urlhaus.abuse.ch/downloads/hostfile/
+# https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt
+# https://hostfiles.frogeye.fr/firstparty-trackers-hosts.txt
+# https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
+# https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts
+# https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts
+# https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts
+# https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext
+# https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt
+# https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt
+# https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts
+# https://adaway.org/hosts.txt
+# https://blocklistproject.github.io/Lists/abuse.txt
+# https://blocklistproject.github.io/Lists/ransomware.txt
+# https://blocklistproject.github.io/Lists/malware.txt
+# https://blocklistproject.github.io/Lists/gambling.txt
+# https://blocklistproject.github.io/Lists/scam.txt
+# https://blocklistproject.github.io/Lists/ads.txt
+# https://blocklistproject.github.io/Lists/drugs.txt
+# https://blocklistproject.github.io/Lists/crypto.txt
+# https://github.com/eznix86/mauritius-pihole-blocklist/blob/main/lists/ads.txt
+# https://github.com/eznix86/mauritius-pihole-blocklist/blob/main/lists/trackers.txt
