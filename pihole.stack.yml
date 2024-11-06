@@ -1,6 +1,10 @@
+x-custom:
+  files:
+    - .env:/var/data/pihole/.env
+
 services:
   pihole:
-    image: bigbeartechworld/big-bear-pihole-unbound:2024.02.2
+    image: bigbeartechworld/big-bear-pihole-unbound:2024.07.0
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -10,9 +14,10 @@ services:
       - "5353:5353/udp"
     environment:
       TZ: "Indian/Mauritius"
-      WEBPASSWORD: "onedoesnotsimplyaddapasswordintheyamlfile"
       DNS1: "127.0.0.1#5353"
       DNS2: "no"
+    env_file:
+      - /var/data/pihole/.env
     networks:
       - reverse-proxy
     volumes:
@@ -49,5 +54,17 @@ networks:
 # https://blocklistproject.github.io/Lists/ads.txt
 # https://blocklistproject.github.io/Lists/drugs.txt
 # https://blocklistproject.github.io/Lists/crypto.txt
-# https://github.com/eznix86/mauritius-pihole-blocklist/blob/main/lists/ads.txt
-# https://github.com/eznix86/mauritius-pihole-blocklist/blob/main/lists/trackers.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.amazon.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.apple.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.winoffice.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.tiktok.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.oppo-realme.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.xiaomi.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.lgwebos.txt
+# https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/hosts/native.huawei.txt
+# https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-domains.txt
+# https://raw.githubusercontent.com/ZingyAwesome/easylists-for-pihole/master/easyprivacy.txt
+# https://raw.githubusercontent.com/eznix86/mauritius-pihole-blocklist/main/lists/trackers.txt
+# https://raw.githubusercontent.com/eznix86/mauritius-pihole-blocklist/main/lists/ads.txt
+# https://raw.githubusercontent.com/ZingyAwesome/easylists-for-pihole/master/easylist.txt
+# https://raw.githubusercontent.com/ZingyAwesome/easylists-for-pihole/master/cookies.txt
