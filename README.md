@@ -48,6 +48,7 @@ sudo rm -rf /usr/local/bin/docker-compose && sudo rm -rf /etc/docker && sudo rm 
 ```sh
 docker node update --label-add node=prime raspberrypi
 # docker network create --driver overlay --attachable --scope swarm vpn-proxy
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder # clear DNS
 docker network create reverse-proxy --scope swarm --driver overlay
 docker node ps --no-trunc
 docker stack ls
@@ -63,6 +64,8 @@ docker info
 # rsync config to node
 brew install rsync
 rsync -avPz -e ssh $PWD/./ <user>@<host></host>:<path>
+
+# rsync -avPz -e ssh $PWD/./ brunobernard@raspberrypi.local:/home/brunobernard/stack
 
 # build to registry
  docker build -t caddy-cloudflare-dns:latest caddy/
