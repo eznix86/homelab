@@ -1,0 +1,23 @@
+x-custom:
+  files:
+    - .env:/var/data/vitodeploy/.env
+
+services:
+  vitodeploy:
+    image: vitodeploy/vito:latest
+    ports:
+      - "8185:80"
+    env_file:
+      - /var/data/vitodeploy/.env
+    networks:
+      - reverse-proxy
+    volumes:
+      - "/var/data/vitodeploy/storage:/var/www/html/storage"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+networks:
+  reverse-proxy:
+    external: true
