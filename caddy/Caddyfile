@@ -1,9 +1,14 @@
+(gzip) {
+	encode gzip
+}
+
 (cloudflare) {
+    import gzip
+
 	tls {
 		dns cloudflare {env.CLOUDFLARE_AUTH_TOKEN}
 	}
 }
-
 
 files.home.brunobernard.dev {
 	reverse_proxy filebrowser:80
@@ -51,6 +56,17 @@ jellyfin.home.brunobernard.dev {
 }
 
 pihole.home.brunobernard.dev {
+
+    encode zstd gzip
+
+	redir / /admin{uri}
+
 	reverse_proxy pihole:80
+
+	import cloudflare
+}
+
+vitodeploy.home.brunobernard.dev {
+	reverse_proxy vitodeploy:80
 	import cloudflare
 }
