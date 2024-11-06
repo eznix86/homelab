@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  aria2-pro:
+    image: p3terx/aria2-pro
+    ports:
+      - 6800:6800
+      - 6888:6888
+      - 6888:6888/udp
+    networks:
+      - reverse-proxy
+      - aria2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Indian/Mauritius
+      - UMASK_SET=022
+      - RPC_SECRET=P3TERX
+      - RPC_PORT=6800
+      - LISTEN_PORT=6888
+      - DISK_CACHE=64M
+      - IPV6_MODE=false
+      - UPDATE_TRACKERS=true
+      - CUSTOM_TRACKER_URL=
+    volumes:
+      - /var/data/aria2/config:/config
+      - /storage/downloads:/downloads
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  ariang:
+    image: p3terx/ariang
+    command: --port 6880 --ipv6
+    networks:
+      - reverse-proxy
+      - aria2
+    ports:
+      - 6880:6880
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  reverse-proxy:
+    external: true
+  aria2:
