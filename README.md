@@ -13,9 +13,11 @@ Right now it is just one raspberry pi with 1 SSD via USB.
    2. [https://canonical-microceph.readthedocs-hosted.com/en/latest/](https://canonical-microceph.readthedocs-hosted.com/en/latest/)
 5. GlusterFS (Simpler) -- Storage
    1. [https://thenewstack.io/tutorial-deploy-a-highly-availability-glusterfs-storage-cluster/](https://thenewstack.io/tutorial-deploy-a-highly-availability-glusterfs-storage-cluster/)
-   # Docker Swarm Setup and Management Documentation
 
-## Table of Contents
+## Docker Swarm Setup and Management Documentation
+
+### Table of Contents
+
 - [Installation](#installation)
 - [Uninstallation](#uninstallation)
 - [Management Commands](#management-commands)
@@ -27,7 +29,7 @@ Right now it is just one raspberry pi with 1 SSD via USB.
   - [Remote Management](#remote-management)
   - [Registry Management](#registry-management)
 
-   ## Installation
+  ## Installation
 
    Install Docker and initialize a Swarm cluster:
 
@@ -43,7 +45,7 @@ Right now it is just one raspberry pi with 1 SSD via USB.
    python main.py deploy jellyfin arr filebrowser portainer registry caddy aria2 pihole vitodeploy
    ```
 
-   ## Uninstallation
+  ## Uninstallation
 
    Follow these steps to completely remove Docker and all associated components:
 
@@ -73,15 +75,17 @@ Right now it is just one raspberry pi with 1 SSD via USB.
    sudo rm -rf ~/.docker
    ```
 
-   ## Management Commands
+  ## Management Commands
 
-   ### Node Management
+  ### Node Management
+
    ```bash
    # Add label to node
    docker node update --label-add node=prime raspberrypi
    ```
 
-   ### Network Management
+  ### Network Management
+
    ```bash
    # Create overlay network for reverse proxy
    docker network create reverse-proxy --scope swarm --driver overlay
@@ -90,7 +94,8 @@ Right now it is just one raspberry pi with 1 SSD via USB.
    sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
    ```
 
-   ### Service Management
+  ### Service Management
+
    ```bash
    # View service information
    docker service ps <stack>_<container> --no-trunc
@@ -101,25 +106,29 @@ Right now it is just one raspberry pi with 1 SSD via USB.
    sudo docker service update --cap-add NET_ADMIN <stack>_<container>
    ```
 
-   ### Stack Management
+  ### Stack Management
+
    ```bash
    # List and remove stacks
    docker stack ls
    docker stack rm <stack_name>
+   docker stack ps <stack_name>
 
    # List services
    docker services ls
    docker service ps
    ```
 
-   ### System Information
+  ### System Information
+
    ```bash
    # View Docker system information
    docker info
    docker node ps --no-trunc
    ```
 
-   ### Remote Management
+  ### Remote Management
+
    ```bash
    # Install rsync (macOS)
    brew install rsync
@@ -130,7 +139,8 @@ Right now it is just one raspberry pi with 1 SSD via USB.
    # rsync -avPz -e ssh $PWD/./ brunobernard@home.brunobernard.dev:/home/brunobernard/homelab
    ```
 
-   ### Registry Management
+  ### Registry Management
+
    ```bash
    # Build and push to private registry
    docker build -t caddy-cloudflare-dns:latest caddy/
