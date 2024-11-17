@@ -1,72 +1,38 @@
 (gzip) {
-	encode gzip
+	encode zstd gzip
 }
 
 (cloudflare) {
-    import gzip
-
 	tls {
 		dns cloudflare {env.CLOUDFLARE_AUTH_TOKEN}
 	}
 }
 
-files.home.brunobernard.dev {
-	reverse_proxy filebrowser:80
-	import cloudflare
-}
-
-portainer.home.brunobernard.dev {
-	reverse_proxy portainer:9000
-	import cloudflare
-}
-
-prowlarr.home.brunobernard.dev {
-	reverse_proxy prowlarr:9696
-	import cloudflare
-}
-
-radarr.home.brunobernard.dev {
-	reverse_proxy radarr:7878
-	import cloudflare
-}
-
-sonarr.home.brunobernard.dev {
-	reverse_proxy sonarr:8989
-	import cloudflare
-}
-
-jellyseerr.home.brunobernard.dev {
-	reverse_proxy jellyseerr:5055
-	import cloudflare
-}
-
-transmission.home.brunobernard.dev {
-	reverse_proxy transmission:9091
-	import cloudflare
-}
-
-registry.home.brunobernard.dev {
-	reverse_proxy registry:5000
-	import cloudflare
-}
-
-jellyfin.home.brunobernard.dev {
-	reverse_proxy jellyfin:8096
-	import cloudflare
+(services) {
+	map {host} {upstream} {
+		jellyfin.home.brunobernard.dev     jellyfin:8096
+		jellyseerr.home.brunobernard.dev   jellyseerr:5055
+		radarr.home.brunobernard.dev       radarr:7878
+		sonarr.home.brunobernard.dev       sonarr:8989
+		prowlarr.home.brunobernard.dev     prowlarr:9696
+		files.home.brunobernard.dev        filebrowser:80
+		transmission.home.brunobernard.dev transmission:9091
+		portainer.home.brunobernard.dev    portainer:9000
+		registry.home.brunobernard.dev     registry:5000
+		vitodeploy.home.brunobernard.dev   vitodeploy:80
+	}
+	reverse_proxy {upstream}
 }
 
 pihole.home.brunobernard.dev {
-
-    encode zstd gzip
-
+	import gzip
 	redir / /admin{uri}
-
 	reverse_proxy pihole:80
-
 	import cloudflare
 }
 
-vitodeploy.home.brunobernard.dev {
-	reverse_proxy vitodeploy:80
+*.home.brunobernard.dev {
+	import gzip
+	import services
 	import cloudflare
 }
